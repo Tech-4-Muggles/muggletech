@@ -1,17 +1,21 @@
 <!doctype html><html><head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>JobAid Settings</title>
+  <title>JobAid — Settings</title>
   <style>
-    body{font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px;max-width:760px;margin:auto}
+    body{font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px;max-width:820px;margin:auto}
     input,select,textarea,button{padding:8px;border-radius:8px;border:1px solid #ddd}
-    .row{display:flex;gap:10px;align-items:center;margin:10px 0}
+    .row{display:flex;gap:10px;align-items:center;margin:10px 0;flex-wrap:wrap}
     .list{border:1px solid #eee;padding:10px;border-radius:8px}
     label{min-width:140px}
     .hint{color:#666}
+    .subtle{color:#64748b}
+    .card{border:1px solid #eee; padding:12px; border-radius:10px; margin:14px 0}
+    .pill{display:inline-block;padding:2px 8px;border:1px solid #ddd;border-radius:999px;margin:2px}
   </style>
 </head><body>
   <h2>JobAid — Settings</h2>
-  <section>
+
+  <section class="card">
     <h3>Model Provider</h3>
     <div class="row">
       <label for="provider">Provider</label>
@@ -33,15 +37,33 @@
     <p class="hint">Tip: Gemini 1.5 Flash has a free tier in Google AI Studio. Choose provider, paste your key, and click Save.</p>
   </section>
 
-  <section>
-    <h3>Resumes</h3>
-    <div class="row"><input type="file" id="file" accept=".txt,.pdf,.md,.rtf,.docx" multiple/><button id="addResume">Add</button></div>
-    <div class="list" id="resumeList"></div>
+  <section class="card">
+    <h3>Keyword Highlight</h3>
+    <div class="row">
+      <input id="kw" placeholder="Latest extracted keywords (read-only unless you edit manually)" style="flex:1"/>
+      <button id="saveKw">Save Keywords</button>
+    </div>
+    <p class="subtle">These are the latest keywords extracted from a job page (used for on-page highlighting and scoring). You may edit to tweak highlighting.</p>
+
+    <h4 style="margin-top:16px">Default Watchlist (auto-highlight on pages)</h4>
+    <div class="row">
+      <input id="watchlist" placeholder="e.g. H1B, visa sponsorship, remote, hybrid, equity, L5, staff, growth" style="flex:1"/>
+      <button id="saveWatch">Save Watchlist</button>
+    </div>
+    <p class="subtle">
+      <b>How to use:</b> Add comma-separated terms you always care about. JobAid will automatically highlight them on any page you visit and show a floating banner with hit counts.<br/>
+      <b>Examples:</b> <span class="pill">H1B</span> <span class="pill">visa sponsorship</span> <span class="pill">remote</span> <span class="pill">hybrid</span> <span class="pill">LPM</span> <span class="pill">fintech</span>
+    </p>
   </section>
 
-  <section>
-    <h3>Keyword Highlight</h3>
-    <div class="row"><input id="kw" placeholder="comma,separated,terms" style="flex:1"/><button id="saveKw">Save Keywords</button></div>
+  <section class="card">
+    <h3>Resumes</h3>
+    <div class="row">
+      <input type="file" id="file" accept=".txt,.pdf,.md,.rtf,.docx" multiple/>
+      <input id="resumeName" placeholder="Resume name (optional)" style="flex:1"/>
+      <button id="addResume">Add</button>
+    </div>
+    <div class="list" id="resumeList"></div>
   </section>
 
   <script src="vendor/pdf.js"></script>

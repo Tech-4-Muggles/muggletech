@@ -1,9 +1,7 @@
 async function extractPdfText(file){
   try{
     const buf = await file.arrayBuffer();
-    // pdf.js UMD is loaded via <script src="vendor/pdf.js"></script> which exposes window.pdfjsLib
     const pdfjsLib = window.pdfjsLib || (await (async()=>{throw new Error('pdf.js not loaded');})());
-    // Point pdf.js at the worker shipped with the extension
     if (pdfjsLib?.GlobalWorkerOptions) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = chrome.runtime.getURL('vendor/pdf.worker.js');
     }

@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 chrome.contextMenus.onClicked.addListener((info) => { if (info.menuItemId === "jobaid-open-options") chrome.runtime.openOptionsPage(); });
 
-// Backwards-compat relay; popup now prefers chrome.scripting directly but we keep this.
+// Fallback relay (rare) — popup prefers executeScript directly.
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "GET_TAB_HTML") {
     chrome.scripting.executeScript({

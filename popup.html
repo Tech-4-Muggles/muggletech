@@ -2,56 +2,150 @@
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>JobAid</title>
   <style>
-    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--accent:#4f46e5;--accent2:#22d3ee;--border:#1f2937;--text:#e5e7eb;--panel:#0b1220}
+    :root{--bg:#0f172a;--card:#0b1220;--muted:#94a3b8;--accent:#4f46e5;--accent2:#22d3ee;--border:#1f2937;--text:#e5e7eb;--panel:#0b1220}
     body.light{--bg:#f8fafc;--card:#ffffff;--muted:#64748b;--accent:#4f46e5;--accent2:#06b6d4;--border:#e5e7eb;--text:#0f172a;--panel:#ffffff}
     html,body{margin:0;padding:0}
-    body{font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;width:380px;min-height:420px;background:linear-gradient(135deg,var(--bg),#020617);color:var(--text)}
+    body{font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;width:460px;min-height:600px;background:linear-gradient(135deg,var(--bg),#020617);color:var(--text)}
     body.light{background:linear-gradient(135deg,#eef2ff,#ffffff)}
-    body.compact{width:300px;min-height:360px}
     .wrap{padding:14px}
-    .brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .badge{font-size:12px;color:var(--muted)}
-    .card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);backdrop-filter:blur(6px)}
-    body.light .card{background:#ffffff80;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-    body.compact .grid{grid-template-columns:1fr 1fr}
+    .brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    h2{margin:0;font-size:18px}
+    .switches{display:flex;gap:10px;align-items:center}
+    .theme{display:flex;align-items:center;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+    .theme span{padding:6px 10px;cursor:pointer;font-size:12px}
+    .theme .on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+
+    /* big overall score */
+    .scoreWrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin:6px 0 10px}
+    .scoreBig{font-weight:800;font-size:26px;line-height:1;border:2px solid var(--border);border-radius:16px;padding:6px 14px}
+    .scoreBig.good{background:#064e3b;color:#ecfdf5;border-color:#065f46}
+    .scoreBig.ok{background:#1f2937;color:#e5e7eb}
+    .scoreBig.low{background:#3f1d1d;color:#fee2e2;border-color:#7f1d1d}
+    .scoreNote{font-size:12px;color:var(--muted)}
+
+    .tabs{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .tab{flex:1;text-align:center;padding:8px;cursor:pointer;color:var(--muted)}
+    .tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:600}
+    .card{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);backdrop-filter:blur(6px);margin-top:10px}
+
     .row{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
     .btn{padding:8px 10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--panel);color:var(--text)}
     .btn:hover{border-color:#334155}
     .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:white;font-weight:600}
+    .btn.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-weight:700}
     .muted{color:var(--muted)}
     .pill{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;margin:2px}
-    h2{margin:0;font-size:18px}
-    #output{white-space:pre-wrap;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:6px}
-    .switches{display:flex;gap:8px}
-    .toggle{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:999px;padding:6px 10px;cursor:pointer;font-size:12px}
+    .pill.good{background:#064e3b;color:#ecfdf5;border-color:#065f46}
+    .pill.miss{background:#7f1d1d;color:#fee2e2;border-color:#7f1d1d}
+    .hint{color:var(--muted);font-size:12px}
+    .notice{border:1px solid var(--border); background:rgba(255,255,255,.05); padding:8px 10px; border-radius:10px; margin:6px 0}
+
+    #output{display:none;white-space:pre-wrap;min-height:0;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:6px}
     .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;background:#111827;color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;box-shadow:0 8px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .2s, transform .2s}
     body.light .toast{background:#111827;color:#fff}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+    /* Cover letter editor */
+    #clWrap{display:none;margin-top:8px}
+    #clToolbar{display:flex;gap:8px;margin-bottom:6px}
+    #clText{width:100%;height:140px;border-radius:10px;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:8px;resize:vertical;white-space:pre-wrap}
+
+    /* Resumes tab */
+    #resList .item{display:flex;align-items:flex-start;justify-content:space-between;border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0;background:rgba(255,255,255,.03);gap:12px}
+    #resList .featured{border:1px solid #22d3ee; box-shadow:0 0 0 2px rgba(34,211,238,.2)}
+    #resList .left{min-width:0;flex:1}
+    #resList .name{font-weight:600;word-break:break-word}
+    #resList .preview{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;display:inline-block}
+    #resList .actions{display:flex;flex-direction:column;gap:6px}
+    #resList .actions .btn{padding:6px 8px}
+    .badge{font-size:11px;border:1px solid var(--border);border-radius:999px;padding:2px 6px;margin-left:6px}
+
+    /* Optimize tab */
+    #optPresent,#optMissing{display:flex;flex-wrap:wrap;margin-top:6px}
+    #optBox{border:1px dashed var(--border);border-radius:12px;padding:10px;margin-top:8px}
+    .sponsor{font-size:12px;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:auto}
+    .sponsor.ok{background:#064e3b;color:#ecfdf5;border-color:#065f46}
+    .sponsor.maybe{background:#1f2937;color:#e5e7eb}
+    .sponsor.no{background:#7f1d1d;color:#fee2e2;border-color:#7f1d1d}
   </style>
 </head><body>
   <div class="wrap">
-    <div class="brand"><h2>JobAid</h2>
+    <div class="brand">
+      <h2>JobAid</h2>
       <div class="switches">
-        <button id="btnTheme" class="toggle" title="Toggle dark/light">🌙</button>
-        <button id="btnCompact" class="toggle" title="Toggle compact">Compact</button>
-        <span class="badge" id="modelWarn"></span>
+        <div class="theme" id="themeToggle">
+          <span data-mode="dark" id="thDark" class="on">Dark</span>
+          <span data-mode="light" id="thLight">Light</span>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="grid" style="margin-bottom:8px">
-        <button class="btn primary" id="btnSummarize" title="Summarize the job">Summarize JD</button>
-        <button class="btn" id="btnKeywords" title="Extract keywords">Keywords</button>
-        <button class="btn" id="btnHighlight" title="Highlight on page">Highlight</button>
-      </div>
+
+    <!-- Overall score -->
+    <div class="scoreWrap" id="scoreWrap" style="display:none">
+      <div class="scoreBig" id="overallScore">0%</div>
+      <div class="scoreNote" id="scoreNote">Overall match vs selected resume.</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div id="tabBtnAnalyze" class="tab active">Analyze</div>
+      <div id="tabBtnOptimize" class="tab">Optimize</div>
+      <div id="tabBtnResumes" class="tab">Resumes</div>
+    </div>
+
+    <!-- Analyze tab -->
+    <div id="tabAnalyze" class="card">
       <div class="row">
-        <button class="btn" id="btnBestResume" title="Find best-fit resume">Best-fit</button>
+        <button class="btn" id="btnAnalyze" title="Summarize, Extract Keywords, Highlight">Analyze & Highlight</button>
+        <button class="btn" id="btnBestResume" title="See match scores">Best-fit</button>
         <button class="btn" id="btnCoverLetter" title="Draft a cover letter">Cover Letter</button>
+        <span class="muted" id="modelWarn" style="margin-left:auto"></span>
+        <span id="sponsorPill" class="sponsor maybe" style="display:none">Sponsorship: —</span>
       </div>
-      <div class="muted" id="modelHint">Model:</div>
+
+      <div class="hint" id="pageHint" style="display:none"></div>
+      <div id="notice" class="notice" style="display:none"></div>
       <div id="output"></div>
+
+      <div id="clWrap">
+        <div id="clToolbar">
+          <button class="btn" id="btnCopyCL">Copy</button>
+          <button class="btn" id="btnDownloadCL">Download PDF</button>
+        </div>
+        <textarea id="clText" placeholder="Your cover letter will appear here and is fully editable..."></textarea>
+      </div>
+    </div>
+
+    <!-- Optimize tab -->
+    <div id="tabOptimize" class="card" style="display:none">
+      <div class="row">
+        <b>Optimize resume</b>
+        <select id="optResumeSel"></select>
+        <button class="btn" id="btnSuggest">Suggest Edits</button>
+        <span class="hint" id="optInfo"></span>
+      </div>
+      <div class="hint">Present keywords (green) vs Missing (red)</div>
+      <div id="optPresent"></div>
+      <div id="optMissing"></div>
+
+      <div id="optBox">
+        <div class="hint" id="optEst"></div>
+        <div class="notice" id="optGuidance" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Resumes tab -->
+    <div id="tabResumes" class="card" style="display:none">
+      <div class="row">
+        <input type="file" id="file" accept=".txt,.pdf,.md,.rtf,.docx" multiple/>
+        <input id="resumeName" placeholder="Resume name (optional)" style="flex:1"/>
+        <button id="addResume" class="btn">Add</button>
+      </div>
+      <div id="resList"></div>
+      <div class="muted" id="resHint">Tip: set a Default resume; the big score follows your selection on Optimize (Default preselected).</div>
     </div>
   </div>
+
   <script src="vendor/pdf.js"></script>
   <script src="utils.js"></script>
   <script src="provider.js"></script>
